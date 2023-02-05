@@ -37,7 +37,10 @@ uvicorn app:app --reload
 This will run the app on `http://127.0.0.1:8000/`
 To run the interactive API `http://127.0.0.1:8000/docs/`
 
-Sample output:
+Sample output for `a16z_developers-as-creatives (1).json`:
+![Screen Shot 2023-02-05 at 2 52 58 AM](https://user-images.githubusercontent.com/52694032/216807865-b72562e9-f1c0-4637-a4f5-2346b8e9b204.png)
+
+
 
 ## Approach
 
@@ -47,14 +50,23 @@ For a podcast segment to be exciting to want to focus on the two following prope
 
 The workflow is as follows:
 
-1.  **Topic-Based Text Segmentation** The first step is to split the transcript into meaningful segments according to the topics spoken. We do this by using sub-topic drift detection metrics as implemented in the [Texttiling Algorithm](https://aclanthology.org/J97-1003/). This is a unsupervised approach which uses lexical cohesion between sentence blocks to determine topic boundaries. 
+### 1. Topic-Based Text Segmentation
+ The first step is to split the transcript into meaningful segments according to the topics spoken. We do this by using sub-topic drift detection metrics as implemented in the [Texttiling Algorithm](https://aclanthology.org/J97-1003/). This is a unsupervised approach which uses lexical cohesion between sentence blocks to determine topic boundaries. 
 
-2.  **Extract top segments using Extractive Summarization** Now that we have segmented the data into chunks of different topics, we need to identify important chunks. We do this by running an extractive summarization module to capture top 5% sentences which capture the essence of the document. The extractive summarizer uses clutering and ranking methods along with **Sentence embeddings**. In this way we capture the salient information from the transcript. We then consider topic segments which contain these top-ranked sentences. This also reduces the search space for our next step. 
+**NOTE** The efficiency tiling algorithm is highly dependant on the pseudosentence size (w parameter). For this model, I have set this size as 10% of the document length. For smaller documents, this parameter as not very optimal as it produces extremely small segments. 
+We can also use [Elbow methods](https://en.wikipedia.org/wiki/Elbow_method_(clustering)#:~:text=In%20cluster%20analysis%2C%20the%20elbow,number%20of%20clusters%20to%20use.) to find the optimal size, however this will be a tradeoff between accuracy and speed. See 'Suggested Improvements' section for an alternative to texttiling.
+
+### 2.Extract top segments using Extractive Summarization
+ Now that we have segmented the data into chunks of different topics, we need to identify important chunks. We do this by running an extractive summarization module to capture top 5% sentences which capture the essence of the document. The extractive summarizer uses clutering and ranking methods along with **Sentence embeddings**. In this way we capture the salient information from the transcript. We then consider topic segments which contain these top-ranked sentences. This also reduces the search space for our next step. 
 For implementation we use [Sentence-Bert Summarizer](https://github.com/dmmiller612/bert-extractive-summarizer#use-sbert) with ``paraphrase-MiniLM-L6-v2`` pretrained model as it runs very fast.  
 
 **NOTE 1**: We can also use [Keyword extraction ](https://github.com/MaartenGr/KeyBERT) methods. But the problem with this method is that keywords can be spread all over the document. So even if we perform semantic matching of keyword phrases with topic segments, its not guranteed that the segment with most keywords will be most informative/engaging. 
 
 **NOTE 2**: Through my experiments I found that generating top 5% sentences was giving best results, however we can tune this parameter based on memory and latency requirements.
 
-3.  **Ranking segments based on emotional intensity** Now that we have potential "highlight" segments, how do we choose the most engaging one? This [paper](https://arxiv.org/pdf/1503.04723.pdf) explains the corelation of high-arousal emotions and virality of content. I decided to use emotion-based ranking for this. We obtain emotion-scores across all 6 emotions (anger, disgust, fear, joy, sadness, surprise) for each segments, and select the segment displaying highest emotion-score. We choose the highest score across all the segments (and across all emotions).
+### 3. Ranking segments based on emotional intensity
+ Now that we have potential "highlight" segments, how do we choose the most engaging one? This [paper](https://arxiv.org/pdf/1503.04723.pdf) explains the corelation of high-arousal emotions and virality of content. I decided to use emotion-based ranking for this. We obtain emotion-scores across all 6 emotions (anger, disgust, fear, joy, sadness, surprise) for each segments, and select the segment displaying highest emotion-score. We choose the highest score across all the segments (and across all emotions).
 
+## TODOS and suggested Further Improvements
+- **Speech-based emotion recognition** can be more useful as it categories emotions based on pitch/ sound intensity and other acoustic paramters.
+- **[Neural models for topical change detection]https://huggingface.co/dennlinger/roberta-cls-consec)** While texttiling is a very fast unsupervised appraoach to find topic changes, we can further improve its accuracy by predicting coherence between two sequences. Especially if the detected highlight is very small, we can use the above method to check cohesion with next segment.
