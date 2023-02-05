@@ -17,7 +17,17 @@ highlights = extractor.run_highlight_detector(data)
 ```
 
 Input `file_id` contains the JSON file extracted after calling Google ASR API for transcription. 
-Check a sample file at   
+Check a sample file format at  `transcripts/`. 
+
+Output for `transcripts/radiolab_dinopocalypse-redux (1).json` Link to the podcast (https://radiolab.org/episodes/dinopocalypse-redux)
+```json
+{
+  "file_id": "radiolab_dinopocalypse-redux (1).json",
+  "start_time": 2276.56,
+  "end_time": 2392.4,
+  "transcript_content": "You might feel the earth rumble there's some shaking and then that rumbling, that shaking comes with it, a big wave from the Sea Whoa, and so you get this big push that comes in and then what happens is that comes in is you're already starting to get the glass balls from the heavens and so and what they see. Is You get this like wave of kind of what seems to be almost like raining glass balls and then that's like mixed in with the mud from like the title search and the layers of things that are dying and the fish like some of the details that stand out to me, the most are. The fish are all generally pointed in the same direction and they're like stacked. Pretty tightly mouths open and their fins splayed, but one of the things I think is super cool. Is that all that different stuff? We talked about happening across the globe in our original show, like it probably got really hot, like you know that was Jay Malo. She was like it's really hot dog Robertson was talking about like the boiler, the boiler effect, and then we talked about that flash of blue light, and we talked about things raining from the sky and we talked about June or July. All that stuff. A lot of that stuff was based on really smart models. This seems to be a place that actually will provide evidence either for or against those models like charred tree trunks, which I think made like j Milosch really happy because he was like. I did get really hot you know, and then they were like the fish wrapped around trees, and then there appears to be a dinosaur bone and possibly a dinosaur bone with skin still attached and Kirk Johnson said, if, if that is, if it really is a dinosaur bone and that site is connected to the asteroid, impact like they think it is, it would be the youngest dinosaur ever."
+}
+```
 
 ## Approach
 
