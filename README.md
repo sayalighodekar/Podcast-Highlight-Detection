@@ -4,7 +4,7 @@ A ML-based POC for extracting highlights (most interesting) parts of PodCast usi
 In this repository we extract small clips (like a reel), which represent the most exciting and informative parts of the podcast. These clips can be used to promote the podcast or give a preview of the podcast.
 
 ## Usage
-
+### To run locally 
 To run the Highlight Detection module
 ```python 
 from HighLightDetector import HighlightDetector
@@ -28,6 +28,16 @@ Output for `transcripts/radiolab_dinopocalypse-redux (1).json` Link to the podca
   "transcript_content": "You might feel the earth rumble there's some shaking and then that rumbling, that shaking comes with it, a big wave from the Sea Whoa, and so you get this big push that comes in and then what happens is that comes in is you're already starting to get the glass balls from the heavens and so and what they see. Is You get this like wave of kind of what seems to be almost like raining glass balls and then that's like mixed in with the mud from like the title search and the layers of things that are dying and the fish like some of the details that stand out to me, the most are. The fish are all generally pointed in the same direction and they're like stacked. Pretty tightly mouths open and their fins splayed, but one of the things I think is super cool. Is that all that different stuff? We talked about happening across the globe in our original show, like it probably got really hot, like you know that was Jay Malo. She was like it's really hot dog Robertson was talking about like the boiler, the boiler effect, and then we talked about that flash of blue light, and we talked about things raining from the sky and we talked about June or July. All that stuff. A lot of that stuff was based on really smart models. This seems to be a place that actually will provide evidence either for or against those models like charred tree trunks, which I think made like j Milosch really happy because he was like. I did get really hot you know, and then they were like the fish wrapped around trees, and then there appears to be a dinosaur bone and possibly a dinosaur bone with skin still attached and Kirk Johnson said, if, if that is, if it really is a dinosaur bone and that site is connected to the asteroid, impact like they think it is, it would be the youngest dinosaur ever."
 }
 ```
+### To run the WEBAPI
+To run the server using `fastapi` and `univcorn`
+
+```python3
+uvicorn app:app --reload
+```
+This will run the app on `http://127.0.0.1:8000/`
+To run the interactive API `http://127.0.0.1:8000/docs/`
+
+Sample output:
 
 ## Approach
 
@@ -46,4 +56,5 @@ For implementation we use [Sentence-Bert Summarizer](https://github.com/dmmiller
 
 **NOTE 2**: Through my experiments I found that generating top 5% sentences was giving best results, however we can tune this parameter based on memory and latency requirements.
 
-3.  **Ranking segments based on emotional intensity** Now that we have potential "highlight" segments, how do we choose the most engaging one? I decided to use emotion-based ranking for this. We obtain emotion-scores across all 6 emotions (anger, disgust, fear, joy, sadness, surprise) for each segments, and select the segment displaying highest emotion-score. We choose the highest score across all the segments (and across all emotions).
+3.  **Ranking segments based on emotional intensity** Now that we have potential "highlight" segments, how do we choose the most engaging one? This [paper](https://arxiv.org/pdf/1503.04723.pdf) explains the corelation of high-arousal emotions and virality of content. I decided to use emotion-based ranking for this. We obtain emotion-scores across all 6 emotions (anger, disgust, fear, joy, sadness, surprise) for each segments, and select the segment displaying highest emotion-score. We choose the highest score across all the segments (and across all emotions).
+
